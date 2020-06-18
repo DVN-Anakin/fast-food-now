@@ -50,6 +50,56 @@ const actions = {
         } catch (err) {
             alert("Error creating new menu item.", err);
         }
+    },
+    removeItemType: async(context, id) => {
+        try {
+            await dbMenuRef.doc(id).delete();
+
+            alert("Item type deleted.");
+        } catch (err) {
+            alert(`Error removing item type, ${err}`);
+        }
+    },
+    removeItem: async (context, data) => { 
+        const { typeId, itemData } = data;
+        
+        try {
+            await dbMenuRef.doc(typeId).update({
+                types: firebase.firestore.FieldValue.arrayRemove(itemData)  
+            });
+
+            alert("Item deleted.");
+        } catch (err) {
+            alert(`Error removing item, ${err}`);
+        }
+    },
+    toggleItemAvailability: async (context, data) => {
+        const { typeId, itemData, setAvailability } = data;
+        const actionTextSuccess = setAvailability ? "enabled" : "disabled";
+        const actionTextError = setAvailability ? "enabling" : "disabling";
+        const itemDataNew = JSON.parse(JSON.stringify(itemData)); 
+
+        itemDataNew.availability = setAvailability; 
+        
+        try {
+            // Removing item with old availability data and adding item with new availability data
+            await dbMenuRef
+                    .doc(typeId)
+                    .update({
+                        types: firebase.firestore.FieldValue.arrayRemove(itemData)
+                    })
+                    .then(async () => {
+                        await dbMenuRef
+                            .doc(typeId)
+                            .update({
+                                types: firebase.firestore.FieldValue.arrayUnion(itemDataNew)
+                            });
+                    });
+
+            alert(`Item ${actionTextSuccess}.`);
+        } catch (err) {
+            console.log(`Error ${actionTextError} item, ${err}`);
+        }
     }
 };
 

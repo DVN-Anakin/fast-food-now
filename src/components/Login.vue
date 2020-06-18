@@ -1,6 +1,7 @@
 <template>
-    <div class="login text-left container">
+    <div class="login text-left container px-0 py-5 my-5">
         <form>
+            <h2>Login</h2>
             <div class="form-group">
                 <label for="email">E-mail:</label>
                 <input class="form-control" type="email" id="email" placeholder="Enter e-mail" v-model="email" />

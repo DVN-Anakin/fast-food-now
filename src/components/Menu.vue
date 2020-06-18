@@ -17,8 +17,8 @@
                         </tr>
                         <tr v-for="(option) in item.types.filter(item => item.availability === true)" v-bind:key="option.id">
                             <td class="text-left align-middle"><strong>{{ option.name }}</strong><br><small><i>{{ option.description }}</i></small></td>
-                            <td class="align-middle">${{ option.price }}</td>
-                            <td class="align-middle">
+                            <td class="align-middle text-right">{{ option.price | formatPrice }}</td>
+                            <td class="align-middle text-right">
                                 <button type="button" class="btn btn-success" @click="addToBasket(item, option)">+</button>
                             </td>
                         </tr>
@@ -29,15 +29,15 @@
                 <h3>Basket</h3>
                 <div class="menu__basket-content" v-if="basket.length > 0">
                     <table class="table table-borderless">
-                        <tbody v-for="(basketItem, index) in basket" v-bind:key="basketItem[index]">
-                            <tr>
+                        <tbody>
+                            <tr v-for="(basketItem, index) in basket" v-bind:key="basketItem[index]">
                                 <td class="align-middle">
                                     <div class="row">
                                         <div class="col-12 text-left">{{ basketItem.type }} - {{ basketItem.name }}</div>
                                     </div>
                                     <br />
                                     <div class="row">
-                                        <div class="col-12 text-left">${{ roundNumberTo(basketItem.price * basketItem.quantity, 2) }}</div>
+                                        <div class="col-12 text-left">{{ basketItem.price * basketItem.quantity | formatPrice }}</div>
                                     </div>
                                 </td>
                                 <td class="menu__basket-counter align-middle">
@@ -48,7 +48,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <p class="menu__basket-total">Order total: <strong>$0.00</strong></p>
+                    <p class="menu__basket-total">Order total: <strong>{{ totalPrice | formatPrice }}</strong></p>
                     <button class="btn btn-success" @click="createOrder">Order</button>
                 </div>
                 <div class="menu__basket-content" v-else>
@@ -79,7 +79,17 @@
             // // Using vuex getters with mapping - organized approach
             ...mapGetters([
                 'getMenuItems'
-            ])
+            ]),
+
+            totalPrice() {
+                let totalCost = 0;
+
+                this.basket.map(item => {
+                    totalCost += item.quantity * item.price;
+                });
+
+                return totalCost;
+            }
         },
         methods: {
             roundNumberTo(n, digits) {
@@ -133,6 +143,7 @@
                 const order = {
                     items: { ...this.basket },
                     createdAt: new Date(),
+                    price: this.totalPrice
                 };
                 this.$store.dispatch('createOrder', order);
                 this.basket = [];

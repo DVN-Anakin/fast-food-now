@@ -6,6 +6,18 @@ import History from './components/History';
 import Contact from './components/Contact';
 import Admin from './components/Admin';
 
+// // Lazy loading components via "Dynamic Imports" i.e. these components below will be loaded only when called
+// const Menu = () => import('./components/Menu');
+// const OrderingGuide = () => import('./components/OrderingGuide');
+// const Delivery = () => import('./components/Delivery');
+// const History = () => import('./components/Menu');
+// const Contact = () => import('./components/Contact');
+
+// // Grouping components into chunks for lazy loading i.e. these components below will be lazy loaded together if one of them was called
+// const OrderingGuide = () => import(/* webpackChunkName: "aboutGroup" */ './components/OrderingGuide');
+// const Delivery = () => import(/* webpackChunkName: "aboutGroup" */ './components/Delivery');
+// const History = () => import(/* webpackChunkName: "aboutGroup" */ './components/Menu');
+
 export const routes = [
     { 
         path: "/", 
